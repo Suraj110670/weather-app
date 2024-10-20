@@ -1,0 +1,1 @@
+# template_nodejs_docker_aks

@@ -1,38 +1,24 @@
-# syntax=docker/dockerfile:1
+# Stage 1: Build the Node.js app
+FROM node:18 AS build
 
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
+# Create and set the working directory
+WORKDIR /app
 
-# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
+# Copy package.json and package-lock.json
+COPY package.json ./
 
-ARG NODE_VERSION=20.17.0
+# Install dependencies
+RUN npm install
 
-FROM node:${NODE_VERSION}-alpine
-
-# Use production node environment by default.
-ENV NODE_ENV production
-
-
-WORKDIR /usr/src/app
-
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.npm to speed up subsequent builds.
-# Leverage a bind mounts to package.json and package-lock.json to avoid having to copy them into
-# into this layer.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
-
-# Run the application as a non-root user.
-USER node
-
-# Copy the rest of the source files into the image.
+# Copy the rest of the application code
 COPY . .
 
-# Expose the port that the application listens on.
+# Create a .env file
+RUN echo "OPENWEATHER_API_KEY=9a313a2e0bf1861166401654d2700050" > .env
+
+# Expose the Node.js app port
 EXPOSE 3000
 
-# Run the application.
-CMD node app.js
+# Run the Node.js app
+CMD ["node", "app.js"]
+

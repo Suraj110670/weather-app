@@ -13,9 +13,6 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Create a .env file
-RUN echo "OPENWEATHER_API_KEY=9a313a2e0bf1861166401654d2700050" > .env
-
 # Expose the Node.js app port
 EXPOSE 3000
 
